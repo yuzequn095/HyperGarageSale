@@ -17,8 +17,9 @@ class MyApp extends StatelessWidget {
         title: 'Hyper Garage Sale',
         theme: ThemeData(
           primarySwatch: Colors.blue,
-        ), // ThemeData
+        ),
         home: const ItemDisplayPage(),
+        initialRoute: '/',
         routes: {
           '/postNewItem': (context) => const PostNewItemPage(),
         });

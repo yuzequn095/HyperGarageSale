@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../model/ItemModel.dart';
 
 class PostNewItemForm extends StatefulWidget {
   const PostNewItemForm({Key? key}) : super(key: key);
@@ -11,6 +12,16 @@ class PostNewItemForm extends StatefulWidget {
 class _PostNewItemFormState extends State<PostNewItemForm> {
   final _formKey = GlobalKey<FormState>();
 
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+
+  // push the form text into ItemDisplayPage
+  void _addNewItemInfoEntry() {
+    ItemModel.add(nameController.text, descriptionController.text);
+
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,9 +32,9 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Center(
-                child: Text('Title',
+                child: Text('Name',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               ),
@@ -31,6 +42,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                controller: nameController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter the name of item';
@@ -50,6 +62,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                controller: descriptionController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter the description of item';
@@ -62,7 +75,8 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
               padding: const EdgeInsets.all(8.0),
               child: Center(
                   child: ElevatedButton(
-                      onPressed: () {}, child: const Text('Post Item'))),
+                      onPressed: _addNewItemInfoEntry,
+                      child: const Text('Post Item'))),
             )
           ],
         ),
