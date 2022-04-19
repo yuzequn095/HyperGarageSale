@@ -4,7 +4,7 @@ import '../model/ItemModel.dart';
 
 /*
  * Form to create new Item Model
- * Will be pushed to display page
+ * Will be pushed to display activity
  */
 class PostNewItemForm extends StatefulWidget {
   const PostNewItemForm({Key? key}) : super(key: key);
@@ -100,7 +100,14 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
               padding: const EdgeInsets.all(8.0),
               child: Center(
                   child: ElevatedButton(
-                      onPressed: _addNewItemInfoEntry,
+                      onPressed: () {
+                        const postSuccessfullySnackBar = SnackBar(
+                          content: Text('Your item posted! 0v0'),
+                        );
+                        _addNewItemInfoEntry();
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(postSuccessfullySnackBar);
+                      },
                       child: const Text('Post Item'))),
             )
           ],

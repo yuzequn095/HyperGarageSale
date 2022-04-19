@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hyper_garage_sale/page/ItemDisplayPage.dart';
-import 'package:hyper_garage_sale/page/PostNewItemPage.dart';
+import 'package:hyper_garage_sale/activity/BrowsePostsActivity.dart';
+import 'package:hyper_garage_sale/activity/NewPostActivity.dart';
 
 // entrance for the whole project
 void main() {

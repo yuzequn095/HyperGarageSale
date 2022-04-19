@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/ItemModel.dart';
 
 /*
- * This should be app main page to display all the items posted.
+ * This should be app main activity to display all the items posted.
  */
 class ItemDisplayPage extends StatefulWidget {
   const ItemDisplayPage({Key? key}) : super(key: key);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'PostNewItemForm.dart';
+import 'NewPostActivityForm.dart';
 
 /*
- * This page should be used to allow user to post new item.
+ * This activity should be used to allow user to post new item.
  * It contains one form to save and pass data.
  */
 class PostNewItemPage extends StatefulWidget {
