@@ -51,6 +51,11 @@ class _ItemDisplayPageState extends State<ItemDisplayPage> {
                                   fontWeight: FontWeight.bold, fontSize: 24),
                             ),
                             Text(
+                              _tempItemInfoList[index].price,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            Text(
                               _tempItemInfoList[index].description,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14),

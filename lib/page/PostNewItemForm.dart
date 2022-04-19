@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../model/ItemModel.dart';
 
+/*
+ * Form to create new Item Model
+ * Will be pushed to display page
+ */
 class PostNewItemForm extends StatefulWidget {
   const PostNewItemForm({Key? key}) : super(key: key);
 
@@ -13,11 +17,13 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
   final _formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
+  final priceController = TextEditingController();
   final descriptionController = TextEditingController();
 
   // push the form text into ItemDisplayPage
   void _addNewItemInfoEntry() {
-    ItemModel.add(nameController.text, descriptionController.text);
+    ItemModel.add(
+        nameController.text, priceController.text, descriptionController.text);
 
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
@@ -50,6 +56,25 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
                   return null;
                 },
               ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                child: Text('Price',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                  controller: priceController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter the price of item';
+                    }
+                    return null;
+                  }),
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
