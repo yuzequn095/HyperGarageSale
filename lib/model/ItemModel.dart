@@ -4,7 +4,8 @@
  * Return a List to store information above
  */
 class ItemModel {
-  static List<Info> _itemInfoList = <Info>[]; // list to save the information
+  static final List<Info> _itemInfoList =
+      <Info>[]; // list to save the information
 
   static add(String name, String price, String description) {
     _itemInfoList.add(Info(name, price, description));

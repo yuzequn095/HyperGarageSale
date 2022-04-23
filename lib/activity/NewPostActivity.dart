@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../main.dart';
+import '../utility/widgets.dart';
 import 'NewPostActivityForm.dart';
 
 /*
@@ -20,7 +23,18 @@ class _PostNewItemPageState extends State<PostNewItemPage> {
       appBar: AppBar(
         title: const Text('Post New Item'),
       ),
-      body: const PostNewItemForm(),
+      // body: const PostNewItemForm(),
+      body: (Consumer<ApplicationState>(
+        builder: (context, appState, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Header('Discussion'),
+            PostNewItemForm(
+              addItemInfo: (n, p, d) => appState.addInfoToItemView(n, p, d),
+            ),
+          ],
+        ),
+      )),
     );
   }
 }

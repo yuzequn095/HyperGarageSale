@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,7 +11,12 @@ import '../model/ItemModel.dart';
  * Will be pushed to display activity
  */
 class PostNewItemForm extends StatefulWidget {
-  const PostNewItemForm({Key? key}) : super(key: key);
+  // const PostNewItemForm({Key? key}) : super(key: key);
+
+  // modified for FireBase
+  const PostNewItemForm({required this.addItemInfo});
+  final FutureOr<void> Function(String name, String price, String description)
+      addItemInfo;
 
   @override
   State<PostNewItemForm> createState() => _PostNewItemFormState();
@@ -38,7 +44,8 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
     ItemModel.add(
         nameController.text, priceController.text, descriptionController.text);
 
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/viewItemList', (route) => false);
   }
 
   // set image to specific imageFile
@@ -246,17 +253,30 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
               padding: const EdgeInsets.all(8.0),
               child: Center(
                   child: ElevatedButton(
-                      onPressed: () {
-                        const postSuccessfullySnackBar = SnackBar(
-                          content: Text('Your item posted! 0v0'),
-                        );
-                        _addNewItemInfoEntry();
-                        // locate where the SnackBar pop up
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(postSuccessfullySnackBar);
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          // store item info in Firebase
+                          await widget.addItemInfo(nameController.text,
+                              priceController.text, descriptionController.text);
+
+                          const postSuccessfullySnackBar = SnackBar(
+                            content: Text('Your item posted! 0v0'),
+                          );
+
+                          _addNewItemInfoEntry(); // display item items in browse page
+
+                          //clear controller
+                          nameController.clear();
+                          priceController.clear();
+                          priceController.clear();
+
+                          // locate where the SnackBar pop up
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(postSuccessfullySnackBar);
+                        }
                       },
                       child: const Text('Post Item'))),
-            )
+            ),
           ],
         ),
       ),
