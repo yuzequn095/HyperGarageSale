@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -38,6 +39,130 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
 
   // array for each image taken
   var imageChoose = [false, false, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                child: Text('Name',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: nameController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter the name of item';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                child: Text('Price',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                  controller: priceController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter the price of item';
+                    }
+                    return null;
+                  }),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(
+                child: Text('Description',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: descriptionController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter the description of item';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: _imageViewWidget(0),
+                  ),
+                  Expanded(
+                    child: _imageViewWidget(1),
+                  ),
+                  Expanded(
+                    child: _imageViewWidget(2),
+                  ),
+                  Expanded(
+                    child: _imageViewWidget(3),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          // store item info in Firebase
+                          await widget.addItemInfo(nameController.text,
+                              priceController.text, descriptionController.text);
+
+                          const postSuccessfullySnackBar = SnackBar(
+                            content: Text('Your item posted! 0v0'),
+                          );
+
+                          _addNewItemInfoEntry(); // display item items in browse page
+
+                          //clear controller
+                          nameController.clear();
+                          priceController.clear();
+                          priceController.clear();
+
+                          // locate where the SnackBar pop up
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(postSuccessfullySnackBar);
+
+                          uploadImage();
+                        }
+                      },
+                      child: const Text('Post Item'))),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   // push the form text into ItemDisplayPage
   void _addNewItemInfoEntry() {
@@ -161,125 +286,28 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(
-                child: Text('Name',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: nameController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the name of item';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(
-                child: Text('Price',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                  controller: priceController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter the price of item';
-                    }
-                    return null;
-                  }),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(
-                child: Text('Description',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: descriptionController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the description of item';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: _imageViewWidget(0),
-                  ),
-                  Expanded(
-                    child: _imageViewWidget(1),
-                  ),
-                  Expanded(
-                    child: _imageViewWidget(2),
-                  ),
-                  Expanded(
-                    child: _imageViewWidget(3),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          // store item info in Firebase
-                          await widget.addItemInfo(nameController.text,
-                              priceController.text, descriptionController.text);
+  uploadImage() async {
+    final _firebaseStorage = FirebaseStorage.instance;
 
-                          const postSuccessfullySnackBar = SnackBar(
-                            content: Text('Your item posted! 0v0'),
-                          );
+    //Upload to Firebase
+    await _firebaseStorage
+        .ref()
+        .child('images/${nameController.text}_image1')
+        .putFile(imageFile1!);
 
-                          _addNewItemInfoEntry(); // display item items in browse page
+    await _firebaseStorage
+        .ref()
+        .child('images/${nameController.text}_image2')
+        .putFile(imageFile2!);
 
-                          //clear controller
-                          nameController.clear();
-                          priceController.clear();
-                          priceController.clear();
+    await _firebaseStorage
+        .ref()
+        .child('images/${nameController.text}_image3')
+        .putFile(imageFile3!);
 
-                          // locate where the SnackBar pop up
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(postSuccessfullySnackBar);
-                        }
-                      },
-                      child: const Text('Post Item'))),
-            ),
-          ],
-        ),
-      ),
-    );
+    await _firebaseStorage
+        .ref()
+        .child('images/${nameController.text}_image4')
+        .putFile(imageFile4!);
   }
 }
