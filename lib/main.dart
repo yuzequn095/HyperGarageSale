@@ -113,7 +113,7 @@ class ApplicationState extends ChangeNotifier {
   }
 
   Future<DocumentReference> addInfoToItemView(
-      String name, String price, String description) {
+      String name, String price, String description, String path) {
     if (_loginState != ApplicationLoginState.loggedIn) {
       throw Exception('Must be logged in');
     }
@@ -124,6 +124,7 @@ class ApplicationState extends ChangeNotifier {
       'name': name,
       'price': price,
       'description': description,
+      'path': path,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'userName': FirebaseAuth.instance.currentUser!.displayName,
       'userId': FirebaseAuth.instance.currentUser!.uid,
