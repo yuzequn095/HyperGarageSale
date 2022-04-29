@@ -1,18 +1,18 @@
-import 'dart:async'; // new
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // new
-import 'package:firebase_core/firebase_core.dart'; // new
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hyper_garage_sale/activity/NewPostActivity.dart';
 import 'package:hyper_garage_sale/activity/PostDetailActivity.dart';
 import 'package:hyper_garage_sale/utility/authentication.dart';
 import 'package:hyper_garage_sale/utility/widgets.dart';
-import 'package:provider/provider.dart'; // new
+import 'package:provider/provider.dart';
 
 import 'activity/BrowsePostsActivity.dart';
 import 'activity/ImageDisplayActivity.dart';
-import 'utility/firebase_options.dart'; // new
+import 'utility/firebase_options.dart';
 
 // entrance for the whole project
 void main() {
@@ -34,20 +34,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Hyper Garage Sale',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.green,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green, // Button color
+              onPrimary: Colors.white, // Text color
+            ),
+          ),
         ),
         // home: const ItemDisplayPage(),
         home: const HomePage(),
+        debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
-          '/viewItemList': (context) => const ItemDisplayPage(),
-          '/postNewItem': (context) => const PostNewItemPage(),
-          '/viewPostDetail': (context) => const PostDetailPage(),
-          '/viewFullScreenImage': (context) => const FullScreenImagePage(),
+          '/viewItemList': (context) =>
+              const ItemDisplayPage(), // page to view all items posted
+          '/postNewItem': (context) =>
+              const PostNewItemPage(), // page to post new item
+          '/viewPostDetail': (context) =>
+              const PostDetailPage(), // page to view item posted detail
+          '/viewFullScreenImage': (context) =>
+              const FullScreenImagePage(), // page to view full screen image
         });
   }
 }
 
+/*
+ * Homepage
+ * Contains sign up/log in UI
+ */
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -55,15 +70,19 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome!'),
+        title: const Text(
+          'Welcome to Hyper Garage Sale',
+          style: TextStyle(fontFamily: 'WaterBrush', fontSize: 30),
+        ),
       ),
       body: ListView(
         children: <Widget>[
-          // Image.asset('assets/codelab.png'),
+          Image.asset('lib/assets/garage_sale_image1.jpg'),
           const SizedBox(height: 8),
-          const IconAndDetail(Icons.calendar_today, 'October 30'),
-          const IconAndDetail(Icons.location_city, 'San Francisco'),
+          const IconAndDetail(Icons.calendar_today, 'April 28, 2022'),
+          const IconAndDetail(Icons.location_city, 'San Jose'),
           Consumer<ApplicationState>(
+            // Authentication Consumer
             builder: (context, appState, _) => Authentication(
               email: appState.email,
               loginState: appState.loginState,
@@ -82,22 +101,43 @@ class HomePage extends StatelessWidget {
             endIndent: 8,
             color: Colors.grey,
           ),
-          const Header("What we'll be doing"),
+          const Header("Enjoy Your Garage Sale Here"),
           const Paragraph(
-            'Join us for a day full of Firebase Workshops and Pizza!',
+            'Join us free for a day full of Surprise!',
           ),
           Consumer<ApplicationState>(
             builder: (context, appState, _) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (appState.loginState == ApplicationLoginState.loggedIn) ...[
-                  const Header('Discussion'),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/viewItemList',
-                          arguments: appState.itemInfoLists);
-                    },
-                    child: const Icon(Icons.add),
+                  const Paragraph('Click add icon to post your own item'),
+                  const Paragraph('Click arrow icon to have a look around'),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/postNewItem',
+                                arguments: appState.itemInfoLists);
+                          },
+                          child: const Icon(
+                            Icons.add_circle,
+                            size: 50.0,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/viewItemList',
+                                arguments: appState.itemInfoLists);
+                          },
+                          child: const Icon(
+                            Icons.arrow_circle_right_rounded,
+                            size: 50.0,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ],
@@ -117,6 +157,10 @@ class ApplicationState extends ChangeNotifier {
     init();
   }
 
+  /*
+   * Upload item information to Firebase
+   * path: we will use this to pair images
+   */
   Future<DocumentReference> addInfoToItemView(
       String name, String price, String description, String path) {
     if (_loginState != ApplicationLoginState.loggedIn) {
@@ -161,10 +205,6 @@ class ApplicationState extends ChangeNotifier {
               ),
             );
           }
-          print('In main');
-          print(_itemInfoLists.length);
-          print(_itemInfoLists[0].name);
-          print(_itemInfoLists[1].name);
           notifyListeners();
         });
       } else {

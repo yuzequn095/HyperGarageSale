@@ -161,7 +161,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(postSuccessfullySnackBar);
 
-                          uploadImage();
+                          uploadImage(); // upload images to Firebase
                         }
                       },
                       child: const Text('Post Item'))),
@@ -293,6 +293,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
     }
   }
 
+  // upload images to specific folder in Firebase
   uploadImage() async {
     final _firebaseStorage = FirebaseStorage.instance;
     String imageFolder = path;
