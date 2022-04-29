@@ -2,7 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 /*
- * Store Firebase data
+ * Store Firebase data model
  */
 class ItemPostInfo {
   ItemPostInfo(
@@ -16,12 +16,11 @@ class ItemPostInfo {
   final String path;
 }
 
+/*
+ * Item detail view model
+ */
 class ItemPostDetailModel {
   final ItemPostInfo textModel;
-  // final Image image1;
-  // final Image image2;
-  // final Image image3;
-  // final Image image4;
   var url1;
   var url2;
   var url3;
@@ -36,8 +35,6 @@ class ItemPostDetailModel {
  */
 class ItemDisplayPage extends StatefulWidget {
   const ItemDisplayPage({Key? key}) : super(key: key);
-  // const ItemDisplayPage({required this.messages});
-  // final List<ItemPostInfo> messages; // new
 
   @override
   State<ItemDisplayPage> createState() => _ItemDisplayPageState();
@@ -46,10 +43,8 @@ class ItemDisplayPage extends StatefulWidget {
 class _ItemDisplayPageState extends State<ItemDisplayPage> {
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)!.settings.arguments as List<ItemPostInfo>;
-    // print('length');
-    // print(arguments.length);
+    final arguments = ModalRoute.of(context)!.settings.arguments
+        as List<ItemPostInfo>; // get the argument passed in
 
     return Scaffold(
       appBar: AppBar(
@@ -62,6 +57,7 @@ class _ItemDisplayPageState extends State<ItemDisplayPage> {
             return Card(
               child: InkWell(
                 onTap: () async {
+                  // get the url for each image
                   final imagePath = arguments[index].path;
                   final imagePath1 = 'images' + imagePath + "/_image1";
                   final ref1 = FirebaseStorage.instance.ref().child(imagePath1);
@@ -129,71 +125,5 @@ class _ItemDisplayPageState extends State<ItemDisplayPage> {
         child: const Icon(Icons.add),
       ),
     );
-
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('Hyper Garage Sale'),
-    //   ),
-    //   body: Center(
-    //     child: FutureBuilder(
-    //       future: ItemModel.readAll(), //callback to receive new passed in item
-    //       builder: (context, snapshot) {
-    //         if (snapshot.hasData == false ||
-    //             snapshot.data == null ||
-    //             snapshot.data == '') {
-    //           return const Text(
-    //               'No items found. \nPlease clock on + button to add new item.');
-    //         } // check if snapshot contains data
-    //
-    //         var _tempItemInfoList = snapshot.data as List<Info>;
-    //         // print("Temporary Info List count => " + _tempItemInfoList.length.toString());
-    //
-    //         return ListView.builder(
-    //           itemBuilder: (context, index) {
-    //             return Card(
-    //               child: Row(
-    //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                 children: <Widget>[
-    //                   Padding(
-    //                     padding: const EdgeInsets.all(8.0),
-    //                     child: Column(
-    //                       crossAxisAlignment: CrossAxisAlignment.start,
-    //                       children: <Widget>[
-    //                         Text(
-    //                           _tempItemInfoList[index].name,
-    //                           style: const TextStyle(
-    //                               fontWeight: FontWeight.bold, fontSize: 24),
-    //                         ),
-    //                         Text(
-    //                           _tempItemInfoList[index].price,
-    //                           style: const TextStyle(
-    //                               fontWeight: FontWeight.bold, fontSize: 14),
-    //                         ),
-    //                         Text(
-    //                           _tempItemInfoList[index].description,
-    //                           style: const TextStyle(
-    //                               fontWeight: FontWeight.bold, fontSize: 14),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 ],
-    //               ),
-    //             );
-    //           },
-    //           itemCount:
-    //               _tempItemInfoList == null ? 0 : _tempItemInfoList.length,
-    //         );
-    //       }, // builder
-    //     ),
-    //   ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () {
-    //       Navigator.pushNamed(context, '/postNewItem');
-    //     },
-    //     tooltip: 'Post New Item',
-    //     child: const Icon(Icons.add),
-    //   ),
-    // );
   }
 }

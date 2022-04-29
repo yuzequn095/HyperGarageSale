@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'BrowsePostsActivity.dart';
 
+/*
+ * The page is for a specific item view
+ */
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({Key? key}) : super(key: key);
 
@@ -14,6 +17,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget build(BuildContext context) {
     final postItem =
         ModalRoute.of(context)!.settings.arguments as ItemPostDetailModel;
+
+    // set up the four images
     Image image1 =
         Image.network(postItem.url1, width: 75, height: 75, fit: BoxFit.fill);
     Image image2 =

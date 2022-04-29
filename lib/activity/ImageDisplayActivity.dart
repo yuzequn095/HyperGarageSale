@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/*
+ * This page is for image review in full screen size
+ */
 class FullScreenImagePage extends StatelessWidget {
   const FullScreenImagePage({Key? key}) : super(key: key);
 

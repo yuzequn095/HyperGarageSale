@@ -22,7 +22,7 @@ class Paragraph extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Text(
           content,
-          style: const TextStyle(fontSize: 18),
+          style: const TextStyle(fontFamily: 'IndieFlower', fontSize: 18),
         ),
       );
 }
@@ -56,7 +56,9 @@ class StyledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => OutlinedButton(
         style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: Colors.deepPurple)),
+            primary: Colors.white,
+            backgroundColor: Colors.green,
+            side: const BorderSide(color: Colors.lightGreenAccent)),
         onPressed: onPressed,
         child: child,
       );
