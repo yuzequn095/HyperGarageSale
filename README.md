@@ -6,6 +6,7 @@ This app integrated Firebase for Authentication and Storage.
 
 * Please note you must upload FOUR images with item to avoid errors. 
 * Please also note I have not saved images in emulator gallery, so please choose CAMERA to take pictures.
+* Because the images uplaoding may take times, so please wait seconds to check after item posted.
 
 Thanks.
 
