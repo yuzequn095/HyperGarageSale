@@ -5,11 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart'; // new
 import 'package:firebase_core/firebase_core.dart'; // new
 import 'package:flutter/material.dart';
 import 'package:hyper_garage_sale/activity/NewPostActivity.dart';
+import 'package:hyper_garage_sale/activity/PostDetailActivity.dart';
 import 'package:hyper_garage_sale/utility/authentication.dart';
 import 'package:hyper_garage_sale/utility/widgets.dart';
 import 'package:provider/provider.dart'; // new
 
 import 'activity/BrowsePostsActivity.dart';
+import 'activity/ImageDisplayActivity.dart';
 import 'utility/firebase_options.dart'; // new
 
 // entrance for the whole project
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         routes: {
           '/viewItemList': (context) => const ItemDisplayPage(),
           '/postNewItem': (context) => const PostNewItemPage(),
+          '/viewPostDetail': (context) => const PostDetailPage(),
+          '/viewFullScreenImage': (context) => const FullScreenImagePage(),
         });
   }
 }
@@ -90,7 +94,8 @@ class HomePage extends StatelessWidget {
                   const Header('Discussion'),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/viewItemList');
+                      Navigator.pushNamed(context, '/viewItemList',
+                          arguments: appState.itemInfoLists);
                     },
                     child: const Icon(Icons.add),
                   ),
@@ -113,7 +118,7 @@ class ApplicationState extends ChangeNotifier {
   }
 
   Future<DocumentReference> addInfoToItemView(
-      String name, String price, String description) {
+      String name, String price, String description, String path) {
     if (_loginState != ApplicationLoginState.loggedIn) {
       throw Exception('Must be logged in');
     }
@@ -124,6 +129,7 @@ class ApplicationState extends ChangeNotifier {
       'name': name,
       'price': price,
       'description': description,
+      'path': path,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'userName': FirebaseAuth.instance.currentUser!.displayName,
       'userId': FirebaseAuth.instance.currentUser!.uid,
@@ -138,8 +144,34 @@ class ApplicationState extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
         _loginState = ApplicationLoginState.loggedIn;
+        // start the subscription from Firebase
+        _firebaseItemSubscription = FirebaseFirestore.instance
+            .collection('storage')
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+            .listen((snapshot) {
+          _itemInfoLists = [];
+          for (final document in snapshot.docs) {
+            _itemInfoLists.add(
+              ItemPostInfo(
+                name: document.data()['name'] as String,
+                price: document.data()['price'] as String,
+                description: document.data()['description'] as String,
+                path: document.data()['path'] as String,
+              ),
+            );
+          }
+          print('In main');
+          print(_itemInfoLists.length);
+          print(_itemInfoLists[0].name);
+          print(_itemInfoLists[1].name);
+          notifyListeners();
+        });
       } else {
         _loginState = ApplicationLoginState.loggedOut;
+        // end subscription from Firebase
+        _itemInfoLists = [];
+        _firebaseItemSubscription?.cancel();
       }
       notifyListeners();
     });
@@ -150,6 +182,11 @@ class ApplicationState extends ChangeNotifier {
 
   String? _email;
   String? get email => _email;
+
+  // Set subscription and getter for data in Firebase
+  StreamSubscription<QuerySnapshot>? _firebaseItemSubscription;
+  List<ItemPostInfo> _itemInfoLists = [];
+  List<ItemPostInfo> get itemInfoLists => _itemInfoLists;
 
   void startLoginFlow() {
     _loginState = ApplicationLoginState.emailAddress;

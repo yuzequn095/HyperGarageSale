@@ -3,6 +3,7 @@
  * Item name, Item price, Item Description
  * Return a List to store information above
  */
+
 class ItemModel {
   static final List<Info> _itemInfoList =
       <Info>[]; // list to save the information

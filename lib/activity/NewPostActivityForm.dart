@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,10 @@ class PostNewItemForm extends StatefulWidget {
   // const PostNewItemForm({Key? key}) : super(key: key);
 
   // modified for FireBase
+  // const PostNewItemForm({required this.addItemInfo});
   const PostNewItemForm({required this.addItemInfo});
-  final FutureOr<void> Function(String name, String price, String description)
-      addItemInfo;
+  final FutureOr<void> Function(
+      String name, String price, String description, String path) addItemInfo;
 
   @override
   State<PostNewItemForm> createState() => _PostNewItemFormState();
@@ -25,6 +27,8 @@ class PostNewItemForm extends StatefulWidget {
 
 class _PostNewItemFormState extends State<PostNewItemForm> {
   final _formKey = GlobalKey<FormState>();
+
+  String path = "";
 
   // form controllers
   final nameController = TextEditingController();
@@ -134,9 +138,13 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
                   child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
+                          path = imageFile1 == null ? "" : imageFile1!.path;
                           // store item info in Firebase
-                          await widget.addItemInfo(nameController.text,
-                              priceController.text, descriptionController.text);
+                          await widget.addItemInfo(
+                              nameController.text,
+                              priceController.text,
+                              descriptionController.text,
+                              path);
 
                           const postSuccessfullySnackBar = SnackBar(
                             content: Text('Your item posted! 0v0'),
@@ -169,8 +177,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
     ItemModel.add(
         nameController.text, priceController.text, descriptionController.text);
 
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/viewItemList', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   // set image to specific imageFile
@@ -288,26 +295,28 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
 
   uploadImage() async {
     final _firebaseStorage = FirebaseStorage.instance;
+    String imageFolder = path;
+    print(imageFolder);
 
     //Upload to Firebase
     await _firebaseStorage
         .ref()
-        .child('images/${nameController.text}_image1')
+        .child('images/$imageFolder/${nameController.text}_image1')
         .putFile(imageFile1!);
 
     await _firebaseStorage
         .ref()
-        .child('images/${nameController.text}_image2')
+        .child('images/$imageFolder/${nameController.text}_image2')
         .putFile(imageFile2!);
 
     await _firebaseStorage
         .ref()
-        .child('images/${nameController.text}_image3')
+        .child('images/$imageFolder/${nameController.text}_image3')
         .putFile(imageFile3!);
 
     await _firebaseStorage
         .ref()
-        .child('images/${nameController.text}_image4')
+        .child('images/$imageFolder/${nameController.text}_image4')
         .putFile(imageFile4!);
   }
 }

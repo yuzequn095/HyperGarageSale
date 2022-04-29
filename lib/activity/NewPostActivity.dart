@@ -30,7 +30,8 @@ class _PostNewItemPageState extends State<PostNewItemPage> {
           children: [
             const Header('Discussion'),
             PostNewItemForm(
-              addItemInfo: (n, p, d) => appState.addInfoToItemView(n, p, d),
+              addItemInfo: (n, p, d, f) =>
+                  appState.addInfoToItemView(n, p, d, f),
             ),
           ],
         ),
