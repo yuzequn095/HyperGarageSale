@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class PostNewItemForm extends StatefulWidget {
   // const PostNewItemForm({Key? key}) : super(key: key);
 
   // modified for FireBase
+  // const PostNewItemForm({required this.addItemInfo});
   const PostNewItemForm({required this.addItemInfo});
   final FutureOr<void> Function(
       String name, String price, String description, String path) addItemInfo;
@@ -175,8 +177,7 @@ class _PostNewItemFormState extends State<PostNewItemForm> {
     ItemModel.add(
         nameController.text, priceController.text, descriptionController.text);
 
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/viewItemList', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   // set image to specific imageFile
